@@ -6,9 +6,20 @@
 //  Copyright © 2020 Dallas Johnson. All rights reserved.
 //
 
-import Foundation
 import SwiftUI
+import Combine
 
 class ViewModel2: Presentable, ObservableObject {
-    @Published var destinationView: AnyView = AnyView(EmptyView())
+    func createView() -> AnyView { AnyView(View2(viewModel: self, accountId: "sdfsdf")) }
+
+    var stepPublisher = PassthroughSubject<AppStep, Never>()
+
+    @Published var buttonLabel: String = "Action Button Label"
+
+    func showSecondDetails() {
+        buttonLabel = "ActionButton has been tapped"
+//        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + DispatchTimeInterval.milliseconds(2000)) {
+        self.stepPublisher.send(.step3Required)
+//        }
+    }
 }

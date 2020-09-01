@@ -9,33 +9,20 @@
 import SwiftUI
 
 struct View1: View {
-//    @EnvironmentObject var flowCoordinator: FlowCoodinator
     @ObservedObject var viewModel: ViewModel1
-    @ObservedObject var state: NavigationState
 
     var body: some View {
-        NavigationView {
-            VStack {
-                Text("Sample View 1")
-                FlowLinkView(action: {
-                    self.viewModel.showDetails()
-                }, state: state,
-                   buttonLabel: {
-                    Text("MyLabel")
-                })
-            }
-
+        VStack {
+            Text("Sample View 1")
+            Button(action: {
+                self.viewModel.showDetails()
+            }, label: {
+                Text("Show Details")
+            })
         }
-
-
-
-
-
-
-        //            NavigationButton(contentView: Text(viewModel.buttonLabel),
-        //                             isPresented: flowCoordinator.viewSubject .childNode.isPresented) { (isPresented) -> AnyView in
-        //                return self.navigationState.childNode
-        //            }
+        .tabItem {
+            Text("Hello")
+        }
     }
 }
 

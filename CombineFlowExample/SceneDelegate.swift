@@ -12,7 +12,7 @@ import SwiftUI
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
-    var coordinator: FlowCoodinator?
+    var coordinator: TabBarNavCoordinator?
 
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
@@ -21,18 +21,39 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
 
         // Create the SwiftUI view that provides the window contents.
-//        let contentView = View1(accountId: "sdfsdfsdf")
+        //        let contentView = View1(accountId: "sdfsdfsdf")
 
         // Use a UIHostingController as window root view controller.
         if let windowScene = scene as? UIWindowScene {
             let window = UIWindow(windowScene: windowScene)
-            coordinator = FlowCoodinator(window: window)
-            let flow = ExampleFlow1()
-            coordinator?.startWith(flow: flow)
+            coordinator = TabBarNavCoordinator(window: window)
+            let flow1 = ExampleFlow1()
+            let flow2 = ExampleFlow1()
+            let flow3 = ExampleFlow1()
+            let flow4 = ExampleFlow1()
+            let flow5 = ExampleFlow1()
+            let flow6 = ExampleFlow1()
 
-
-//            self.window = window
-//            window.makeKeyAndVisible()
+            let tItem1 = UITabBarItem(title: "First", image: nil, selectedImage: nil)
+            let tItem2 = UITabBarItem(title: "Second", image: nil, selectedImage: nil)
+            let tItem3 = UITabBarItem(title: "Third", image: nil, selectedImage: nil)
+            let tItem4 = UITabBarItem(title: "Forth", image: nil, selectedImage: nil)
+            let tItem5 = UITabBarItem(title: "Fifth", image: nil, selectedImage: nil)
+            let tItem6 = UITabBarItem(title: "Sixth", image: nil, selectedImage: nil)
+            coordinator?.startFlows(flowContributors:
+                [(tItem1, .contribute(withNextFlow: flow1,
+                                      startingStep: AppStep.step1Required)),
+                 (tItem2, .contribute(withNextFlow: flow2,
+                                      startingStep: AppStep.initialLaunch)),
+                 (tItem3, .contribute(withNextFlow: flow3,
+                                      startingStep: AppStep.step2Required(username: "username"))),
+                 (tItem4, .contribute(withNextFlow: flow4,
+                                      startingStep: AppStep.initialLaunch)),
+                 (tItem5, .contribute(withNextFlow: flow5,
+                                      startingStep: AppStep.step1Required)),
+                 (tItem6, .contribute(withNextFlow: flow6,
+                                      startingStep: AppStep.initialLaunch))
+            ])
         }
     }
 

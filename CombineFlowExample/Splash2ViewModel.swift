@@ -9,17 +9,21 @@
 import Combine
 import SwiftUI
 
-class ViewModel1: Presentable, ObservableObject {
-    func createView() -> AnyView { AnyView(View1(viewModel: self)) }
+class Splash2ViewModel: Presentable, ObservableObject {
+    func createView() -> AnyView { AnyView(SplashView2(viewModel: self)) }
 
     var stepPublisher = PassthroughSubject<AppStep, Never>()
 
-    @Published var buttonLabel: String = "Action Button Label"
+    @Published var buttonLabel: String
+
+    init(title: String) {
+        buttonLabel = title
+    }
 
     func showDetails() {
-        buttonLabel = "ActionButton has been tapped"
+        buttonLabel = "SplashView has been tapped"
         //        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + DispatchTimeInterval.milliseconds(200)) {
-        self.stepPublisher.send(.step2Required(username: "username to login") )
+        self.stepPublisher.send(.step2Required(username: "Flow2 step 2 account ID"))
         //        }
     }
 }

@@ -7,7 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		850CF19024E0739D009D6F01 /* NavigationState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 850CF18F24E0739D009D6F01 /* NavigationState.swift */; };
+		850CF19024E0739D009D6F01 /* ViewPresentation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 850CF18F24E0739D009D6F01 /* ViewPresentation.swift */; };
+		850CF19224F32D1E009D6F01 /* ViewModel3.swift in Sources */ = {isa = PBXBuildFile; fileRef = 850CF19124F32D1E009D6F01 /* ViewModel3.swift */; };
+		850CF19424F32D7F009D6F01 /* View3.swift in Sources */ = {isa = PBXBuildFile; fileRef = 850CF19324F32D7F009D6F01 /* View3.swift */; };
+		850CF19824F96BCA009D6F01 /* NavCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 850CF19724F96BCA009D6F01 /* NavCoordinator.swift */; };
+		850CF19A24F9A7E6009D6F01 /* SplashView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 850CF19924F9A7E6009D6F01 /* SplashView.swift */; };
+		850CF19C24F9A8A2009D6F01 /* SplashViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 850CF19B24F9A8A2009D6F01 /* SplashViewModel.swift */; };
+		850CF19E24F9AD2A009D6F01 /* Splash2ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 850CF19D24F9AD2A009D6F01 /* Splash2ViewModel.swift */; };
+		850CF1A024F9AD7F009D6F01 /* SplashView2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 850CF19F24F9AD7F009D6F01 /* SplashView2.swift */; };
 		855BB9B224CB3EEC00F10AC2 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 855BB9B124CB3EEC00F10AC2 /* AppDelegate.swift */; };
 		855BB9B424CB3EEC00F10AC2 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 855BB9B324CB3EEC00F10AC2 /* SceneDelegate.swift */; };
 		855BB9B624CB3EEC00F10AC2 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 855BB9B524CB3EEC00F10AC2 /* ContentView.swift */; };
@@ -44,7 +51,14 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		850CF18F24E0739D009D6F01 /* NavigationState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationState.swift; sourceTree = "<group>"; };
+		850CF18F24E0739D009D6F01 /* ViewPresentation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewPresentation.swift; sourceTree = "<group>"; };
+		850CF19124F32D1E009D6F01 /* ViewModel3.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewModel3.swift; sourceTree = "<group>"; };
+		850CF19324F32D7F009D6F01 /* View3.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = View3.swift; sourceTree = "<group>"; };
+		850CF19724F96BCA009D6F01 /* NavCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavCoordinator.swift; sourceTree = "<group>"; };
+		850CF19924F9A7E6009D6F01 /* SplashView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashView.swift; sourceTree = "<group>"; };
+		850CF19B24F9A8A2009D6F01 /* SplashViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SplashViewModel.swift; sourceTree = "<group>"; };
+		850CF19D24F9AD2A009D6F01 /* Splash2ViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Splash2ViewModel.swift; sourceTree = "<group>"; };
+		850CF19F24F9AD7F009D6F01 /* SplashView2.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SplashView2.swift; sourceTree = "<group>"; };
 		855BB9AE24CB3EEC00F10AC2 /* CombineFlowExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CombineFlowExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		855BB9B124CB3EEC00F10AC2 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		855BB9B324CB3EEC00F10AC2 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -124,8 +138,14 @@
 				855BB9F024DDF7FA00F10AC2 /* Flow1.swift */,
 				855BB9EE24DDC66C00F10AC2 /* ViewModel1.swift */,
 				855BB9E424DADC8000F10AC2 /* View1.swift */,
+				850CF19B24F9A8A2009D6F01 /* SplashViewModel.swift */,
+				850CF19924F9A7E6009D6F01 /* SplashView.swift */,
+				850CF19D24F9AD2A009D6F01 /* Splash2ViewModel.swift */,
+				850CF19F24F9AD7F009D6F01 /* SplashView2.swift */,
 				855BB9F224DE2F3000F10AC2 /* ViewModel2.swift */,
 				855BB9E624DADC9E00F10AC2 /* View2.swift */,
+				850CF19124F32D1E009D6F01 /* ViewModel3.swift */,
+				850CF19324F32D7F009D6F01 /* View3.swift */,
 				855BB9B724CB3EEE00F10AC2 /* Assets.xcassets */,
 				855BB9BC24CB3EEE00F10AC2 /* LaunchScreen.storyboard */,
 				855BB9BF24CB3EEE00F10AC2 /* Info.plist */,
@@ -165,8 +185,9 @@
 			children = (
 				855BB9E224CB3F1B00F10AC2 /* Flow.swift */,
 				855BB9EA24DDB80F00F10AC2 /* FlowCoordinator.swift */,
+				850CF19724F96BCA009D6F01 /* NavCoordinator.swift */,
 				855BB9E824DC87EC00F10AC2 /* NavigationHelpers.swift */,
-				850CF18F24E0739D009D6F01 /* NavigationState.swift */,
+				850CF18F24E0739D009D6F01 /* ViewPresentation.swift */,
 			);
 			path = CombineFlow;
 			sourceTree = "<group>";
@@ -303,17 +324,24 @@
 			buildActionMask = 2147483647;
 			files = (
 				855BB9B224CB3EEC00F10AC2 /* AppDelegate.swift in Sources */,
-				850CF19024E0739D009D6F01 /* NavigationState.swift in Sources */,
+				850CF19A24F9A7E6009D6F01 /* SplashView.swift in Sources */,
+				850CF19024E0739D009D6F01 /* ViewPresentation.swift in Sources */,
+				850CF19424F32D7F009D6F01 /* View3.swift in Sources */,
 				855BB9EF24DDC66C00F10AC2 /* ViewModel1.swift in Sources */,
 				855BB9E924DC87EC00F10AC2 /* NavigationHelpers.swift in Sources */,
+				850CF19E24F9AD2A009D6F01 /* Splash2ViewModel.swift in Sources */,
+				850CF19224F32D1E009D6F01 /* ViewModel3.swift in Sources */,
 				855BB9F124DDF7FA00F10AC2 /* Flow1.swift in Sources */,
 				855BB9E724DADC9E00F10AC2 /* View2.swift in Sources */,
 				855BB9E324CB3F1B00F10AC2 /* Flow.swift in Sources */,
 				855BB9F324DE2F3000F10AC2 /* ViewModel2.swift in Sources */,
+				850CF19C24F9A8A2009D6F01 /* SplashViewModel.swift in Sources */,
 				855BB9EB24DDB80F00F10AC2 /* FlowCoordinator.swift in Sources */,
 				855BB9B424CB3EEC00F10AC2 /* SceneDelegate.swift in Sources */,
 				855BB9B624CB3EEC00F10AC2 /* ContentView.swift in Sources */,
+				850CF1A024F9AD7F009D6F01 /* SplashView2.swift in Sources */,
 				855BB9E524DADC8000F10AC2 /* View1.swift in Sources */,
+				850CF19824F96BCA009D6F01 /* NavCoordinator.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

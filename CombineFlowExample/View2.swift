@@ -10,10 +10,28 @@ import SwiftUI
 
 struct View2: View {
     @ObservedObject var viewModel: ViewModel2
+//    @ObservedObject var state: NavigationState
+
     var accountId: String
 
     var body: some View {
-        Text("accountId viewkladsljkadsjkladsjkladsjklasdjkladsjkl 1 : \(accountId)")
+//        NavigationView {
+        VStack {
+            Text("Sample View 2")
+            Text("Details : \(accountId)")
+            Button(action: {
+                self.viewModel.showSecondDetails()
+            }, label: {
+                Text("Show second detials")
+            })
+
+//            FlowLinkView(action: {
+//                self.viewModel.showSecondDetails()
+//            }, state: state) {
+//                Text("Show second detials")
+//            }
+        }
+//        }
     }
 }
 

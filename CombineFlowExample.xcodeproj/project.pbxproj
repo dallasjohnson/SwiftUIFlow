@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		850CF19024E0739D009D6F01 /* ViewPresentation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 850CF18F24E0739D009D6F01 /* ViewPresentation.swift */; };
 		850CF19224F32D1E009D6F01 /* ViewModel3.swift in Sources */ = {isa = PBXBuildFile; fileRef = 850CF19124F32D1E009D6F01 /* ViewModel3.swift */; };
 		850CF19424F32D7F009D6F01 /* View3.swift in Sources */ = {isa = PBXBuildFile; fileRef = 850CF19324F32D7F009D6F01 /* View3.swift */; };
 		850CF19824F96BCA009D6F01 /* NavCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 850CF19724F96BCA009D6F01 /* NavCoordinator.swift */; };
@@ -25,7 +24,6 @@
 		855BB9E324CB3F1B00F10AC2 /* Flow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 855BB9E224CB3F1B00F10AC2 /* Flow.swift */; };
 		855BB9E524DADC8000F10AC2 /* View1.swift in Sources */ = {isa = PBXBuildFile; fileRef = 855BB9E424DADC8000F10AC2 /* View1.swift */; };
 		855BB9E724DADC9E00F10AC2 /* View2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 855BB9E624DADC9E00F10AC2 /* View2.swift */; };
-		855BB9E924DC87EC00F10AC2 /* NavigationHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 855BB9E824DC87EC00F10AC2 /* NavigationHelpers.swift */; };
 		855BB9EB24DDB80F00F10AC2 /* FlowCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 855BB9EA24DDB80F00F10AC2 /* FlowCoordinator.swift */; };
 		855BB9ED24DDC10600F10AC2 /* CombineFlowExampleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 855BB9C824CB3EEE00F10AC2 /* CombineFlowExampleTests.swift */; };
 		855BB9EF24DDC66C00F10AC2 /* ViewModel1.swift in Sources */ = {isa = PBXBuildFile; fileRef = 855BB9EE24DDC66C00F10AC2 /* ViewModel1.swift */; };
@@ -51,7 +49,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		850CF18F24E0739D009D6F01 /* ViewPresentation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewPresentation.swift; sourceTree = "<group>"; };
 		850CF19124F32D1E009D6F01 /* ViewModel3.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewModel3.swift; sourceTree = "<group>"; };
 		850CF19324F32D7F009D6F01 /* View3.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = View3.swift; sourceTree = "<group>"; };
 		850CF19724F96BCA009D6F01 /* NavCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavCoordinator.swift; sourceTree = "<group>"; };
@@ -76,7 +73,6 @@
 		855BB9E224CB3F1B00F10AC2 /* Flow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Flow.swift; sourceTree = "<group>"; };
 		855BB9E424DADC8000F10AC2 /* View1.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = View1.swift; sourceTree = "<group>"; };
 		855BB9E624DADC9E00F10AC2 /* View2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = View2.swift; sourceTree = "<group>"; };
-		855BB9E824DC87EC00F10AC2 /* NavigationHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationHelpers.swift; sourceTree = "<group>"; };
 		855BB9EA24DDB80F00F10AC2 /* FlowCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowCoordinator.swift; sourceTree = "<group>"; };
 		855BB9EE24DDC66C00F10AC2 /* ViewModel1.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModel1.swift; sourceTree = "<group>"; };
 		855BB9F024DDF7FA00F10AC2 /* Flow1.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Flow1.swift; sourceTree = "<group>"; };
@@ -186,8 +182,6 @@
 				855BB9E224CB3F1B00F10AC2 /* Flow.swift */,
 				855BB9EA24DDB80F00F10AC2 /* FlowCoordinator.swift */,
 				850CF19724F96BCA009D6F01 /* NavCoordinator.swift */,
-				855BB9E824DC87EC00F10AC2 /* NavigationHelpers.swift */,
-				850CF18F24E0739D009D6F01 /* ViewPresentation.swift */,
 			);
 			path = CombineFlow;
 			sourceTree = "<group>";
@@ -325,10 +319,8 @@
 			files = (
 				855BB9B224CB3EEC00F10AC2 /* AppDelegate.swift in Sources */,
 				850CF19A24F9A7E6009D6F01 /* SplashView.swift in Sources */,
-				850CF19024E0739D009D6F01 /* ViewPresentation.swift in Sources */,
 				850CF19424F32D7F009D6F01 /* View3.swift in Sources */,
 				855BB9EF24DDC66C00F10AC2 /* ViewModel1.swift in Sources */,
-				855BB9E924DC87EC00F10AC2 /* NavigationHelpers.swift in Sources */,
 				850CF19E24F9AD2A009D6F01 /* Splash2ViewModel.swift in Sources */,
 				850CF19224F32D1E009D6F01 /* ViewModel3.swift in Sources */,
 				855BB9F124DDF7FA00F10AC2 /* Flow1.swift in Sources */,

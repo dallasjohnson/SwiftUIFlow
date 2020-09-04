@@ -9,8 +9,8 @@
 import SwiftUI
 import Combine
 
-class ViewModel2: Presentable, ObservableObject {
-    func createView() -> AnyView { AnyView(View2(viewModel: self, accountId: "sdfsdf")) }
+class Flow1ViewModel2: Presentable, ObservableObject {
+    func createView() -> AnyView { AnyView(Flow1View2(viewModel: self, accountId: "sdfsdf")) }
 
     var stepPublisher = PassthroughSubject<AppStep, Never>()
 
@@ -19,7 +19,7 @@ class ViewModel2: Presentable, ObservableObject {
     func showSecondDetails() {
         buttonLabel = "ActionButton has been tapped"
 //        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + DispatchTimeInterval.milliseconds(2000)) {
-        self.stepPublisher.send(.step3Required)
+        self.stepPublisher.send(ExampleAppSteps.step3Required)
 //        }
     }
 }

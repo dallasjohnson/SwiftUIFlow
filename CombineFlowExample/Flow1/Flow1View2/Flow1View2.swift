@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-struct View2: View {
+struct Flow1View2: View {
     @ObservedObject var viewModel: ViewModel2
 //    @ObservedObject var state: NavigationState
 

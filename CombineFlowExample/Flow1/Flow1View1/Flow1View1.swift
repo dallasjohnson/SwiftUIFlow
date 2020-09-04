@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-struct View1: View {
+struct Flow1View1: View {
     @ObservedObject var viewModel: ViewModel1
 
     var body: some View {

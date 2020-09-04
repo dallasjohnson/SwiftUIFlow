@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-struct SplashView: View {
+struct Flow1SplashView: View {
     var viewModel: SplashViewModel
     var body: some View {
         Text("Splash View")
@@ -17,6 +17,6 @@ struct SplashView: View {
 
 struct SplashView_Previews: PreviewProvider {
     static var previews: some View {
-        SplashView(viewModel: SplashViewModel())
+        Flow1SplashView(viewModel: SplashViewModel())
     }
 }

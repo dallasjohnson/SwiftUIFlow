@@ -8,16 +8,15 @@
 
 import SwiftUI
 
-struct SplashView2: View {
-    var viewModel: Splash2ViewModel
+struct Flow2EntryView: View {
+    @ObservedObject var viewModel: Flow2EntryViewModel
     var body: some View {
         VStack {
-        Text("Splash View2")
-        Text(viewModel.buttonLabel)
+            Text("Splash View2")
             Button(action: {
                 self.viewModel.showDetails()
             }) {
-                Text("Return to parent flow")
+                Text("Go to the next view")
             }
         }
     }
@@ -25,6 +24,6 @@ struct SplashView2: View {
 
 struct SplashView2_Previews: PreviewProvider {
     static var previews: some View {
-        SplashView2(viewModel: Splash2ViewModel(title: "My title"))
+        Flow2EntryView(viewModel: Flow2EntryViewModel())
     }
 }

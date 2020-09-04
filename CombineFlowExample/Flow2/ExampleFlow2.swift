@@ -9,37 +9,47 @@
 import Combine
 import Foundation
 
-class ExampleFlow2: BaseFlow, Flow {
-    func navigate(to destn: AppStep) -> AnyPublisher<FlowContributor, Never> {
-        if let step = destn as? ExampleAppSteps {
-            switch step {
-                case .step1Flow2Required(let accountId):
-                    return createFlow2SplashView(title: accountId)
-                case .step2Flow2Required(let accountId):
-                    return self.triggerDetailsDisplay(accountId: accountId)
-                case .step2Required:
+class ExampleFlow2: Flow {
+    func navigate(to intent: Intent) -> AnyPublisher<FlowDriver, Never> {
+        if let intent = intent as? ExampleAppIntents {
+            switch intent {
+                case .flow2InitialLaunch(let accountId):
+                    return flow2Entry(accountId: accountId)
+                case .flow2View1Requested(let username, let firstName):
+                    return showView1(username: username,
+                                          firstName: firstName)
+                case .flow2View2Requested(let username, let firstName, let lastName):
+                    return showView2(username: username,
+                                          firstName: firstName,
+                                          lastName: lastName)
+                case .flow2Completed(let accountId):
                     return Future({ promise in
                         let time = DispatchTime.now() + DispatchTimeInterval.milliseconds(2000)
                         DispatchQueue.main.asyncAfter(deadline: time) {
-                            promise(.success(.pop(ainmated: true)))
+                            promise(.success(.popToParentFlow(withIntent:
+                                ExampleAppIntents.flow1View2Requested(accountId: accountId), animated: true)))
                         }
                     }).eraseToAnyPublisher()
-                //                return Just(.popToParentFlow(withStep: .step2Required(username: "coming back"))).eraseToAnyPublisher()
                 default:
                     return Just(.none).eraseToAnyPublisher()
             }
         }
 
-        return Just(FlowContributor.none).eraseToAnyPublisher()
+        return Just(FlowDriver.none).eraseToAnyPublisher()
     }
     
-    func createFlow2SplashView(title: String) -> AnyPublisher<FlowContributor, Never> {
-        let vm = Splash2ViewModel(title: title)
-        return Just(.view(ViewPresentation(presentable: vm, type: .push))).eraseToAnyPublisher()
+    private func flow2Entry(accountId: String) -> AnyPublisher<FlowDriver, Never> {
+        let vm = Flow2EntryViewModel(accountId: accountId)
+        return Just(.view(vm, style: .push)).eraseToAnyPublisher()
     }
 
-    func triggerDetailsDisplay(accountId: String) -> AnyPublisher<FlowContributor, Never> {
-        let vm2 = Flow1ViewModel2()
-        return Just(.view(ViewPresentation(presentable: vm2, type: .push))).eraseToAnyPublisher()
+    private func showView1(username: String, firstName: String) -> AnyPublisher<FlowDriver, Never> {
+        let vm = Flow2ViewModel1()
+        return Just(.view(vm, style: .push)).eraseToAnyPublisher()
+    }
+
+    private func showView2(username: String, firstName: String, lastName: String) -> AnyPublisher<FlowDriver, Never> {
+        let vm = Flow2ViewModel2()
+        return Just(.view(vm, style: .push)).eraseToAnyPublisher()
     }
 }

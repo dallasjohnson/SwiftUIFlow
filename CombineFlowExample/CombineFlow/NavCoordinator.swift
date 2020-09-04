@@ -42,7 +42,7 @@ class TabBarNavCoordinator: BaseNavCoordinator {
         window.makeKeyAndVisible()
     }
 
-    func startFlows(flowContributors: [(UITabBarItem, FlowContributor)]) {
+    func startFlows(flowContributors: [(UITabBarItem, FlowDriver)]) {
         var flowCoords = [FlowCoordinator]()
         for (tabBarItem, flowContributor) in flowContributors {
             let f = FlowCoordinator()

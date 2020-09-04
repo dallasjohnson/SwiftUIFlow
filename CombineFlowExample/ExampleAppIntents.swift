@@ -1,5 +1,5 @@
 //
-//  ExampleAppIntents1.swift
+//  ExampleAppIntents.swift
 //  CombineFlowExample
 //
 //  Created by Dallas Johnson on 01/09/2020.
@@ -12,11 +12,11 @@ import Foundation
 enum ExampleAppIntents: Intent, Equatable {
     case initialLaunch
     case flow1View1Requested
-    case flow1View2Requested(username: String)
+    case flow1View2Requested(accountId: String)
     case flow1View2Completed
     case flow1RequestFlow2(accountId: String)
-    case flow2InitialLaunch(username: String)
-    case flow2View1Requested(username: String, firstName: String)
-    case flow2View2Requested(username: String, firstName: String, lastName: String)
+    case flow2InitialLaunch(accountId: String)
+    case flow2View1Requested(accountId: String, firstName: String)
+    case flow2View2Requested(accountId: String, firstName: String, lastName: String)
     case flow2Completed(accountId: String)
 }

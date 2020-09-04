@@ -10,56 +10,39 @@ import Foundation
 import SwiftUI
 import Combine
 
+/// This is a marker protocol only to signify to the flow system that the provided type can be used to help transition navigation states
+protocol Intent { }
+
+/// This is the basic protocol definitions for what necessary to be able to present a view/viewcontroller. This would usually be a class that is a view model class for a view.
 protocol Presentable: class {
-    var stepPublisher: PassthroughSubject<AppStep, Never> { get }
+    var intentPublisher: PassthroughSubject<Intent, Never> { get }
     func createView() -> AnyView
 }
 
-struct ViewPresentation {
-    enum PresentingType {
-        case root
-        case push
-        case modal
-        case modalWithPush
-    }
-    
-    let presentable: Presentable
-    let type: PresentingType
+protocol Flow: class {
+    /// This method is a core componenet of the Flow to facilitate navigating with any intent but adapting to the context of whichever flow the coordinator is currently running. This allows intents to be re-used for different contexts.
+    func navigate(to intent: Intent) -> AnyPublisher<FlowDriver, Never>
 }
 
-protocol Flow {
-    func navigate(to destn: AppStep) -> AnyPublisher<FlowContributor, Never>
+enum PresentingStyle {
+    case root
+    case push
+    case modal
+    case modalWithPush
 }
 
-class BaseFlow {
-    var stepSubject = PassthroughSubject<AppStep, Never>()
-    var cancellables = Set<AnyCancellable>()
-}
-
-enum FlowContributor {
-    case contribute(withNextFlow: Flow, startingStep: AppStep)
-    /// the "withStep" step will be forwarded to the current flow
-    case forwardToCurrentFlow(withStep: AppStep)
-    /// the "withStep" step will be forwarded to the parent flow
-    case popToParentFlow(withStep: AppStep)
+enum FlowDriver {
+    case forwardToNewFlow(flow: Flow, intent: Intent)
+    /// the "withIntent" step will be forwarded to the current flow
+    case forwardToCurrentFlow(withIntent: Intent)
+    /// the "withIntent" step will be forwarded to the parent flow
+    case popToParentFlow(withIntent: Intent, animated: Bool)
     /// A view presentation configuration including a view model, presentation style and view creator
-    case view(_ viewPresentable: ViewPresentation)
+    case view(_ viewPresentable: Presentable, style: PresentingStyle)
     /// Dismiss the current view controller
-    case pop(ainmated: Bool)
+    case pop(animated: Bool)
     /// Execute multiple steps in order
-    case multiple(contributions: [FlowContributor])
+    case multiple(contributions: [FlowDriver])
     /// No further navigation for this step
     case none
-}
-
-// Examples -------------------------------------
-
-enum AppStep: Equatable {
-    case initialLaunch
-    case step1Required
-    case step2Required(username: String)
-    case step3Required
-    case step1Flow2Required(accountId: String)
-    case step2Flow2Required(username: String, firstName: String)
-    case step2Flow2Required(accountId: String)
 }

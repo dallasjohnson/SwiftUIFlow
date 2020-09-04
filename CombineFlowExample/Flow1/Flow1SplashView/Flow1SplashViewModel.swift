@@ -12,14 +12,11 @@ import SwiftUI
 class Flow1SplashViewModel: Presentable, ObservableObject {
     func createView() -> AnyView { AnyView(Flow1SplashView(viewModel: self)) }
 
-    var stepPublisher = PassthroughSubject<AppStep, Never>()
+    var intentPublisher = PassthroughSubject<Intent, Never>()
 
-    @Published var buttonLabel: String = "Splash View Title Button Label"
+    @Published var buttonLabel: String = "Go to view 1"
 
     func showDetails() {
-        buttonLabel = "SplashView has been tapped"
-        //        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + DispatchTimeInterval.milliseconds(200)) {
-        self.stepPublisher.send(ExampleAppSteps.step1Required)
-        //        }
+        self.intentPublisher.send(ExampleAppIntents.flow1View1Requested)
     }
 }

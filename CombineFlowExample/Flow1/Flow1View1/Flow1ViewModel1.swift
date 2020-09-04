@@ -12,14 +12,9 @@ import SwiftUI
 class Flow1ViewModel1: Presentable, ObservableObject {
     func createView() -> AnyView { AnyView(Flow1View1(viewModel: self)) }
 
-    var stepPublisher = PassthroughSubject<AppStep, Never>()
-
-    @Published var buttonLabel: String = "Action Button Label"
+    var intentPublisher = PassthroughSubject<Intent, Never>()
 
     func showDetails() {
-        buttonLabel = "ActionButton has been tapped"
-        //        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + DispatchTimeInterval.milliseconds(200)) {
-        self.stepPublisher.send(ExampleAppSteps.step2Required(username: "username to login") )
-        //        }
+        self.intentPublisher.send(ExampleAppIntents.flow1View2Requested(accountId: "username to login") )
     }
 }

@@ -11,19 +11,25 @@ import SwiftUI
 struct Flow2EntryView: View {
     @ObservedObject var viewModel: Flow2EntryViewModel
     var body: some View {
-        VStack {
-            Text("Splash View2")
-            Button(action: {
-                self.viewModel.showDetails()
-            }) {
-                Text("Go to the next view")
+        ZStack {
+            Color.green.edgesIgnoringSafeArea(.all)
+            VStack {
+                Spacer()
+                Text("Flow 2 Entry View")
+                Text("Passed in data: \(viewModel.accountId)")
+                Button(action: {
+                    self.viewModel.showDetails()
+                }) {
+                    Text("Go to the next view")
+                }
+                Spacer()
             }
         }
     }
 }
 
-struct SplashView2_Previews: PreviewProvider {
+struct Flow2EntryView_Previews: PreviewProvider {
     static var previews: some View {
-        Flow2EntryView(viewModel: Flow2EntryViewModel())
+        Flow2EntryView(viewModel: Flow2EntryViewModel(accountId: "sample AccountId"))
     }
 }

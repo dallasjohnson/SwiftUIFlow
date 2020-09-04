@@ -12,15 +12,17 @@ import Combine
 class Flow2ViewModel1: Presentable, ObservableObject {
     func createView() -> AnyView { AnyView(Flow2View1(viewModel: self)) }
 
-    var stepPublisher = PassthroughSubject<AppStep, Never>()
+    var intentPublisher = PassthroughSubject<Intent, Never>()
 
-    @Published var buttonLabel: String = "Action Button Label"
-    @Published var accountId: String = "account id"
+    @Published var buttonLabel: String = "Go to View 2"
+    @Published var accountId: String = "12AJDJ-SFHSJK232-SF"
+//    @Published private var time = 2000
 
     func showDetails() {
+//        timer.fire()
         buttonLabel = "ActionButton has been tapped"
         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + DispatchTimeInterval.milliseconds(2000)) {
-            self.stepPublisher.send(ExampleAppSteps.flow1View2Completed)
+            self.intentPublisher.send(ExampleAppIntents.flow2View2Requested(accountId: self.accountId, firstName: "fiRstanememem", lastName: "llaaaastName"))
         }
     }
 }

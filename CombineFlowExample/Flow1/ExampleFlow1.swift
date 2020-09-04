@@ -9,57 +9,55 @@
 import Combine
 import SwiftUI
 
-class ExampleFlow1: BaseFlow, Flow {
-    func navigate(to destn: AppStep) -> AnyPublisher<FlowContributor, Never> {
-        if let step = destn as? ExampleAppSteps {
-            switch step {
+class ExampleFlow1: Flow {
+    /// This fake var repesents some state that might change throughout the flow but between different that could effect the navigation flow.
+    private var shouldLaunchFlow2 = false
+
+    func navigate(to intent: Intent) -> AnyPublisher<FlowDriver, Never> {
+//        This example is swtiching over the single Intent but there is no reason there couldn't be multiple Intent types that this method could branch through to suit the app's logic.
+        if let intent = intent as? ExampleAppIntents {
+            switch intent {
                 case .initialLaunch:
-                    return createSplashView()
-                case .step1Required:
+                    return showSplash()
+                case .flow1View1Requested:
                     return showView1()
-                case .step2Required(let accountId):
-                    return self.showView2(accountId: accountId)
-                case .step3Required:
-                    return Just(.pop(ainmated: true))
+                case .flow1View2Requested(let accountId):
+                    return showView2(accountId: accountId)
+                case .flow1View2Completed:
+                    shouldLaunchFlow2 = true
+                    return Just(.pop(animated: true))
                         .eraseToAnyPublisher()
-                case .step1Flow2Required(let accountId):
-                    return Just(FlowContributor.contribute(withNextFlow: ExampleFlow2(),
-                                                           startingStep: ExampleAppSteps.step1Flow2Required(accountId: accountId)))
+                case .flow1RequestFlow2(let accountId):
+                    return Just(FlowDriver.forwardToNewFlow(flow: ExampleFlow2(), intent:
+                        ExampleAppIntents.flow2InitialLaunch(accountId: accountId)))
                         .eraseToAnyPublisher()
                 default:
-                    return Just(FlowContributor.none)
+                    return Just(FlowDriver.none)
                         .eraseToAnyPublisher()
             }
         }
-            return Just(FlowContributor.none)
-                .eraseToAnyPublisher()
+        return Just(FlowDriver.none)
+            .eraseToAnyPublisher()
     }
 
-    private func createSplashView() -> AnyPublisher<FlowContributor, Never> {
+    private func showSplash() -> AnyPublisher<FlowDriver, Never> {
         let vm = Flow1SplashViewModel()
-        return Just(.view(ViewPresentation(presentable: vm,
-                                           type: .root)))
+        return Just(.view(vm,
+                          style: .root))
             .eraseToAnyPublisher()
     }
 
-    private func showView1() -> AnyPublisher<FlowContributor, Never> {
-        let vm1 = Flow1ViewModel1()
-        return Just(.view(ViewPresentation(presentable: vm1,
-                                           type: .root)))
+    private func showView1() -> AnyPublisher<FlowDriver, Never> {
+        let vm = Flow1ViewModel1()
+        return Just(.view(vm,
+                          style: .modalWithPush))
             .eraseToAnyPublisher()
     }
 
-    private func showView2(accountId: String) -> AnyPublisher<FlowContributor, Never> {
-        let vm2 = Flow1ViewModel2()
-        return Just(.view(ViewPresentation(presentable: vm2,
-                                           type: .modalWithPush)))
-            .eraseToAnyPublisher()
-    }
-
-    private func showView3() -> AnyPublisher<FlowContributor, Never> {
-        let vm3 = Flow1ViewModel3()
-        return Just(.view(ViewPresentation(presentable: vm3,
-                                           type: .push)))
+    private func showView2(accountId: String) -> AnyPublisher<FlowDriver, Never> {
+        let vm = Flow1ViewModel2(shouldLaunchedFlow2: self.shouldLaunchFlow2)
+        return Just(.view(vm,
+                          style: .push))
             .eraseToAnyPublisher()
     }
 }

@@ -8,28 +8,25 @@
 
 import SwiftUI
 
-struct Flow1View1: View {
-    @ObservedObject var viewModel: Flow1ViewModel1
-    
+struct Flow1View3: View {
+    @ObservedObject var viewModel: ViewModel3
+
     var body: some View {
-        ZStack {
-            Color.yellow.edgesIgnoringSafeArea(.all)
             VStack {
-                Text("Flow 1 View 1")
+                Text("Flow 1 View 3")
                 Button(action: {
                     self.viewModel.showDetails()
                 }, label: {
-                    Text("Show View 2")
+                    Text("Show Details Again")
                 })
             }
-        }
     }
 }
 
-struct Flow1View1_Previews: PreviewProvider {
-    
+struct View3_Previews: PreviewProvider {
+
     static var previews: some View {
-        Flow1View1(viewModel: Flow1ViewModel1())
-        
+        Flow1View3(viewModel: ViewModel3())
+
     }
 }

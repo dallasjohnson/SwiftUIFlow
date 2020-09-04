@@ -7,19 +7,46 @@
 //
 
 import SwiftUI
+import Combine
+
+struct CountDownTimer: View {
+    var message: String
+    @State var counter: Int
+
+    private let timer = Timer.publish(every: 0.001,
+                                      on: .main,
+                                      in: .common).autoconnect()
+
+    var body: some View {
+        Text("\(message)\(counter)")
+            .onReceive(timer) { (pub) -> Void in
+                if self.counter > 0 {
+                    self.counter -= 1
+                }
+        }
+    }
+}
 
 struct Flow2View1: View {
     @ObservedObject var viewModel: Flow2ViewModel1
+    @State private var buttonTapped = false
 
     var body: some View {
-        VStack {
-            Text("Flow 2 View 1")
-            Text("Account ID: \(viewModel.accountId)")
-            Button(action: {
-                self.viewModel.showDetails()
-            }, label: {
-                Text("Show details")
-            })
+        ZStack {
+            Color.green.edgesIgnoringSafeArea(.all)
+            VStack {
+                Text("Flow 2 View 1")
+                Text("View model data: \(viewModel.accountId)")
+                if buttonTapped {
+                    CountDownTimer(message: "time: ", counter: 2000)
+                }
+                Button(action: {
+                    self.buttonTapped = true
+                    self.viewModel.showDetails()
+                }, label: {
+                    Text(viewModel.buttonLabel)
+                })
+            }
         }
     }
 }

@@ -10,16 +10,27 @@ import SwiftUI
 import Combine
 
 class Flow1ViewModel2: Presentable, ObservableObject {
-    func createView() -> AnyView { AnyView(Flow1View2(viewModel: self, accountId: "sdfsdf")) }
+    func createView() -> AnyView { AnyView(Flow1View2(viewModel: self)) }
 
-    var stepPublisher = PassthroughSubject<AppStep, Never>()
+    var intentPublisher = PassthroughSubject<Intent, Never>()
+    var shouldLaunchedFlow2: Bool
 
-    @Published var buttonLabel: String = "Action Button Label"
+    init(shouldLaunchedFlow2: Bool) {
+        self.shouldLaunchedFlow2 = shouldLaunchedFlow2
+    }
 
-    func showSecondDetails() {
-        buttonLabel = "ActionButton has been tapped"
-//        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + DispatchTimeInterval.milliseconds(2000)) {
-        self.stepPublisher.send(ExampleAppSteps.step3Required)
-//        }
+    @Published var accountId: String = "12AJDJ-SFHSJK232-SF"
+    @Published var isLoading = false
+
+    func showDetails() {
+        isLoading = true
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + DispatchTimeInterval.milliseconds(2000)) {
+            if self.shouldLaunchedFlow2 {
+                self.intentPublisher.send(ExampleAppIntents.flow1RequestFlow2(accountId: self.accountId))
+            } else {
+                self.intentPublisher.send(ExampleAppIntents.flow1View2Completed)
+            }
+            self.isLoading = false
+        }
     }
 }

@@ -12,11 +12,11 @@ import Combine
 class Flow2ViewModel2: Presentable, ObservableObject {
     func createView() -> AnyView { AnyView(Flow2View2(viewModel: self)) }
 
-    var stepPublisher = PassthroughSubject<AppStep, Never>()
+    var intentPublisher = PassthroughSubject<Intent, Never>()
 
     @Published var accountId: String = "account id"
 
     func showDetails() {
-        self.stepPublisher.send(ExampleAppSteps.flow1View2Completed)
+        self.intentPublisher.send(ExampleAppIntents.flow2Completed(accountId: accountId))
     }
 }

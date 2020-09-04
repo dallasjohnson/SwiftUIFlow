@@ -9,34 +9,29 @@
 import SwiftUI
 
 struct Flow1View2: View {
-    @ObservedObject var viewModel: ViewModel2
-//    @ObservedObject var state: NavigationState
-
-    var accountId: String
+    @ObservedObject var viewModel: Flow1ViewModel2
 
     var body: some View {
-//        NavigationView {
-        VStack {
-            Text("Sample View 2")
-            Text("Details : \(accountId)")
-            Button(action: {
-                self.viewModel.showSecondDetails()
-            }, label: {
-                Text("Show second detials")
-            })
-
-//            FlowLinkView(action: {
-//                self.viewModel.showSecondDetails()
-//            }, state: state) {
-//                Text("Show second detials")
-//            }
+        ZStack {
+            Color.yellow.edgesIgnoringSafeArea(.all)
+            VStack {
+                Text("Flow 1 View 2")
+                Text("View model data: \(viewModel.accountId)")
+                if viewModel.isLoading {
+                    ActivityIndicator(isAnimating: .constant(true), style: .medium)
+                }
+                Button(action: {
+                    self.viewModel.showDetails()
+                }, label: {
+                    Text(viewModel.shouldLaunchedFlow2 ? "Go to flow 2 with 2 sec delay" : "Go back with 2 sec delay")
+                })
+            }
         }
-//        }
     }
 }
 
-//struct View2_Previews: PreviewProvider {
-//    static var previews: some View {
-//        View1(viewModel: ViewModel1( accountId: "sdfsdfsdf"))
-//    }
-//}
+struct Flow1View2_Previews: PreviewProvider {
+    static var previews: some View {
+        Flow1View2(viewModel: Flow1ViewModel2(shouldLaunchedFlow2: true))
+    }
+}

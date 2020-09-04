@@ -10,22 +10,259 @@ import Foundation
 import SwiftUI
 import Combine
 
-class FlowHostingViewController<Content: View>: UIHostingController<Content> {
-    //    var didDismissPublisher = PassthroughSubject<Void, Never>()
-    //
-    //    override func willMove(toParent parent: UIViewController?) {
-    //        super.willMove(toParent: parent)
-    //        if parent == nil {
-    //            handleDismiss()
-    //        }
-    //    }
-    //
-    //    func handleDismiss(){
-    //        didDismissPublisher.send(())
-    //    }
+private class FlowPresentation {
+    //    var presentingVCFromParentFlow: UIViewController?
+    var viewControllers = [UIViewController]()
+    var flow: Flow
+
+    init(flow: Flow) {
+        self.flow = flow
+    }
+
+    func intentTransition(intent: Intent) -> IntentTransition {
+        return IntentTransition(flow: self, intent: intent)
+    }
 }
 
-extension UINavigationController {
+private struct IntentTransition {
+    var flow: FlowPresentation
+    var intent: Intent
+}
+
+/// A wrapper struct to encapsulate the presentation of a view including the
+private struct ViewPresentation {
+    let presentable: Presentable
+    let type: PresentingStyle
+}
+
+class FlowCoordinator: ObservableObject {
+    @Published public var flowContributor = FlowDriver.none
+    @Published public var rootNavigationController = UINavigationController()
+
+    private var flowStack: [FlowPresentation] = []
+    @Published private var intentTransition: IntentTransition?
+    @Published private var viewPresentation: ViewPresentation?
+    private var dismissVCPublisher = PassthroughSubject<UIViewController, Never>()
+
+    private var cancellables = Set<AnyCancellable>()
+
+    init() {
+
+        // Connect the flowContributors into either viewPresentation or navTransitions
+        $flowContributor
+            .sink(receiveValue: { (flowContributor) in
+                switch flowContributor {
+                    case .forwardToNewFlow(let flow, let intent):
+                        let flowPres: FlowPresentation
+                        if let rootFlowPres = self.flowStack.last {
+                            if rootFlowPres.flow === flow {
+                                flowPres = rootFlowPres
+                            } else {
+                                flowPres = FlowPresentation(flow: flow)
+                                self.flowStack.append(flowPres)
+                            }
+                        } else {
+                            flowPres = FlowPresentation(flow: flow)
+                            self.flowStack.append(flowPres)
+                        }
+                        self.intentTransition = IntentTransition(flow: flowPres, intent: intent)
+                    case .forwardToCurrentFlow(let intent):
+                        guard let rootFlowPres = self.flowStack.last else {
+                            fatalError("Should not be forward to current flow with there being a currentFlow")
+                        }
+                        self.intentTransition = rootFlowPres.intentTransition(intent: intent)
+
+                    case .popToParentFlow(withIntent: let intent, let animated):
+                        guard
+                            let parentFlow = self.flowStack.dropLast().last,
+                            let presentingVC = parentFlow.viewControllers.last
+                            else {
+                                fatalError("Cannot pop to parent without a parent available")
+                        }
+
+                        let topNavVC = self.rootNavigationController.topPresentedNavController
+                        if topNavVC.isModal {
+                            topNavVC.dismiss(animated: animated, completion: {
+                                self.intentTransition = self.flowStack.last?.intentTransition(intent: intent)
+                            })
+                        } else if topNavVC.viewControllers.contains(presentingVC) {
+                            topNavVC.popToViewController(presentingVC,
+                                                         animated: animated)
+                            self.intentTransition = self.flowStack.last?.intentTransition(intent: intent)
+                    }
+                    case .view(let viewPres, let style):
+                        self.viewPresentation = ViewPresentation(presentable: viewPres, type: style)
+                    case .pop(let animated):
+                        let topNavVC = self.rootNavigationController.topPresentedNavController
+                        if topNavVC.isModal {
+                            topNavVC.dismiss(animated: animated, completion: nil)
+                        } else {
+                            topNavVC.popViewController(animated: animated)
+                    }
+                    case .multiple(let contributions):
+                        for contribution in contributions {
+                            self.flowContributor = contribution
+                    }
+                    case .none:
+                        ()
+                }
+            })
+            .store(in: &cancellables)
+
+        // Connect the intent publisher from within each view to intentTransitions
+        $viewPresentation
+            .compactMap { $0 }
+            .flatMap { pres in pres.presentable.intentPublisher
+                .map { intent in
+                    guard let flowPres = self.flowStack.last else {
+                        fatalError("shouldn't get here")
+                    }
+                    return flowPres.intentTransition(intent: intent)
+
+                }
+        }
+        .sink(receiveValue: { [weak self] (intent) in
+            self?.intentTransition = intent
+        })
+            .store(in: &self.cancellables)
+
+        // Connect the intentTransitions via the flow's navigate() to flowContributors
+        $intentTransition
+            .compactMap { $0 }
+            .map { $0.flow.flow.navigate(to: $0.intent) }
+            .switchToLatest()
+            .assign(to: \.flowContributor, on: self)
+            .store(in: &cancellables)
+        
+        // Connect the viewPresentations to the UI rendering
+        $viewPresentation
+            .compactMap { $0 }
+            .sink(receiveValue: { (pres) in
+                let vc = FlowHostingViewController(rootView: pres.presentable.createView())
+                vc.didDismissPublisher
+                    .subscribe(self.dismissVCPublisher)
+                    .store(in: &self.cancellables)
+
+                self.flowStack.last?.viewControllers.append(vc)
+
+                // Save the current view controller so that it can be used as a base to pop to when popping to parent flow
+                switch pres.type {
+                    case .root:
+                        self.rootNavigationController.viewControllers = [vc]
+                    case .push:
+                        let nav = self.rootNavigationController.topPresentedNavController
+                        nav.pushViewController(vc, animated: true)
+                    case .modal:
+                        let nav = self.rootNavigationController.topPresentedNavController
+                        nav.present(vc,
+                                    animated: true,
+                                    completion: nil)
+                    case .modalWithPush:
+                        let modalNav = FlowNavigationController(rootViewController: vc)
+                        modalNav.didDismissPublisher
+                            .subscribe(self.dismissVCPublisher)
+                            .store(in: &self.cancellables)
+                        let nav = self.rootNavigationController.topPresentedViewController
+                        nav.present(modalNav, animated: true, completion: nil)
+                }
+            })
+            .store(in: &cancellables)
+
+        dismissVCPublisher
+            .sink { (dismissingVC) in
+                var vcToDismiss: [UIViewController] = []
+                if let dismissingNavController = dismissingVC as? UINavigationController {
+                    vcToDismiss += dismissingNavController.viewControllers
+                } else {
+                    vcToDismiss = [dismissingVC]
+                }
+
+                // Check if we have popped back to previous flow
+
+//                var poppedVCFound = false
+//                var flowPres = self.flowStack.last
+
+//                while case .some(let _flowPres) = flowPres, !poppedVCFound {
+                for (idx, flowPres) in self.flowStack.reversed().enumerated() {
+                    flowPres.viewControllers.removeAll { vcToDismiss.contains($0) }
+
+                    if flowPres.viewControllers.isEmpty {
+                        print("Popped back to previous flow: \(flowPres)")
+//                        _ = self.flowStack.popLast()
+                        self.flowStack.remove(at: idx)
+//                        flowPres = self.flowStack.last
+                    }
+
+//                    if let foundIdx = flowsVCs.lastIndex(where: {
+//                        $0 === vcToDismiss
+//                    }) {
+//                        poppedVCFound = true
+//                        if foundIdx == 0 {
+//                            print("Popped back to previous flow: \(_flowPres)")
+//                            _ = self.flowStack.popLast()
+//                            flowPres = self.flowStack.last
+//
+//                        } else {
+//                            let rangeToDelete = Range(uncheckedBounds: (lower: foundIdx, upper: flowsVCs.endIndex))
+//                            _flowPres.viewControllers.removeSubrange(rangeToDelete)
+//                        }
+//                    }
+//                    else {
+//                        print("Popped back to previous flow: \(_flowPres)")
+//                        _ = self.flowStack.popLast()
+//                        flowPres = self.flowStack.last
+//                    }
+                }
+        }
+        .store(in: &cancellables)
+    }
+}
+
+private class FlowHostingViewController: UIHostingController<AnyView> {
+    var didDismissPublisher = PassthroughSubject<UIViewController, Never>()
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        if self.isBeingDismissed {
+            handleDismiss()
+        }
+    }
+
+    override func willMove(toParent parent: UIViewController?) {
+        super.willMove(toParent: parent)
+        if parent == nil {
+            handleDismiss() // here
+        }
+    }
+
+    func handleDismiss(){
+        didDismissPublisher.send(self)
+    }
+}
+
+private class FlowNavigationController: UINavigationController {
+    var didDismissPublisher = PassthroughSubject<UIViewController, Never>()
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        if self.isBeingDismissed {
+            handleDismiss()
+        }
+    }
+
+    override func willMove(toParent parent: UIViewController?) {
+        super.willMove(toParent: parent)
+        if parent == nil {
+            handleDismiss()
+        }
+    }
+
+    func handleDismiss(){
+        didDismissPublisher.send(self)
+    }
+}
+
+private extension UINavigationController {
     var topPresentedNavController: UINavigationController {
         guard let vc = presentedViewController as? UINavigationController else {
             return self
@@ -34,7 +271,13 @@ extension UINavigationController {
     }
 }
 
-extension UIViewController {
+private extension UIViewController {
+    var topPresentedViewController: UIViewController {
+        guard let vc = self as? UINavigationController else {
+            return self
+        }
+        return vc.viewControllers.last?.topPresentedViewController ?? vc.topViewController ?? self
+    }
     /**
      returns true only if the viewcontroller is presented.
      */
@@ -52,103 +295,5 @@ extension UIViewController {
             return true
         }
         return false
-    }
-}
-
-class FlowCoordinator: ObservableObject {
-    @Published public var flowContributor = FlowContributor.none
-    @Published public var rootNavigationController = UINavigationController()
-
-    private var flowStack: [Flow] = []
-    private var presentingNavController: UIViewController?
-    private var currentNavController: UIViewController?
-    @Published private var stepTransition: AppStep?
-    @Published private var viewPresentation: ViewPresentation?
-
-    private var cancellables = Set<AnyCancellable>()
-
-    init() {
-
-        // Connect the flowContributors into either viewPresentation or navTransitions
-        $flowContributor
-            .sink(receiveValue: { (flowContributor) in
-                switch flowContributor {
-                    case .contribute(let withNextFlow, let startingStep):
-                        // Save the presenting View controller at the start of a new flow in case pop to parent flow is called later.
-                        self.presentingNavController = self.currentNavController
-                        self.flowStack.append(withNextFlow)
-                        self.stepTransition = startingStep
-                    case .forwardToCurrentFlow(withStep: let withStep):
-                        self.stepTransition = withStep
-                    case .popToParentFlow(withStep: let withStep):
-                        guard let presentingVC = self.presentingNavController else { fatalError("No presenting VC")}
-                        self.rootNavigationController.popToViewController(presentingVC,
-                                                                          animated: true)
-                        _ = self.flowStack.popLast()
-                        guard self.flowStack.last != nil else {
-                            fatalError("Cannot pop to parent without a parent available")
-                        }
-                        self.stepTransition = withStep
-                    case .view(let viewPres):
-                        self.viewPresentation = viewPres
-                    case .pop(let animated):
-                        let topVC = self.rootNavigationController.topPresentedNavController
-                        if topVC.isModal {
-                            topVC.dismiss(animated: animated, completion: nil)
-                        } else {
-                            guard let presentNavVC = self.currentNavController?.parent as? UINavigationController else { fatalError("No parent Nav VC")}
-                            presentNavVC.popViewController(animated: animated)
-                    }
-                    case .multiple(let contributions):
-                        for contribution in contributions {
-                            self.flowContributor = contribution
-                    }
-                    case .none:
-                        ()
-                }
-            })
-            .store(in: &cancellables)
-
-        // Connect the Step Publisher from within each view to stepTransitions
-        $viewPresentation
-            .compactMap { $0 }
-            .flatMap { $0.presentable.stepPublisher }
-            .sink(receiveValue: { [weak self] (step) in
-                self?.stepTransition = step
-            })
-            .store(in: &self.cancellables)
-
-        // Connect the stepTransitions via the flow's navigate() to flowContributors
-        $stepTransition
-            .compactMap { $0 }
-            .map { self.flowStack.last!.navigate(to: $0) }
-            .switchToLatest()
-            .assign(to: \.flowContributor, on: self)
-            .store(in: &cancellables)
-        
-        // Connect the viewPresentations to the UI rendering
-        $viewPresentation
-            .compactMap { $0 }
-            .sink(receiveValue: { (pres) in
-                let vc = FlowHostingViewController(rootView: pres.presentable.createView())
-                // Save the current view controller so that it can be used as a base to pop to when popping to parent flow
-                self.currentNavController = vc
-                switch pres.type {
-                    case .root:
-                        self.rootNavigationController.viewControllers = [vc]
-                    case .push:
-                        let nav = self.rootNavigationController.topPresentedNavController
-                        nav.pushViewController(vc, animated: true)
-                    case .modal:
-                        self.rootNavigationController.present(vc,
-                                                              animated: true,
-                                                              completion: nil)
-                    case .modalWithPush:
-                        let modalNav = UINavigationController(rootViewController: vc)
-                        let nav = self.rootNavigationController.topPresentedNavController
-                        nav.present(modalNav, animated: true, completion: nil)
-                }
-            })
-            .store(in: &cancellables)
     }
 }

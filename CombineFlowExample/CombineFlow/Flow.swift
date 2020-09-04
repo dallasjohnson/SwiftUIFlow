@@ -36,13 +36,11 @@ enum FlowDriver {
     /// the "withIntent" step will be forwarded to the current flow
     case forwardToCurrentFlow(withIntent: Intent)
     /// the "withIntent" step will be forwarded to the parent flow
-    case popToParentFlow(withIntent: Intent, animated: Bool)
+    case popToParentFlow(withIntent: Intent?, animated: Bool)
     /// A view presentation configuration including a view model, presentation style and view creator
     case view(_ viewPresentable: Presentable, style: PresentingStyle)
     /// Dismiss the current view controller
     case pop(animated: Bool)
-    /// Execute multiple steps in order
-    case multiple(contributions: [FlowDriver])
     /// No further navigation for this step
     case none
 }

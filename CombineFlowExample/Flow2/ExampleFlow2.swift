@@ -24,10 +24,14 @@ class ExampleFlow2: Flow {
                                           lastName: lastName)
                 case .flow2Completed(let accountId):
                     return Future({ promise in
-                        let time = DispatchTime.now() + DispatchTimeInterval.milliseconds(2000)
+                        let time = DispatchTime.now() + DispatchTimeInterval.milliseconds(TimeDelayConstant)
                         DispatchQueue.main.asyncAfter(deadline: time) {
                             promise(.success(.popToParentFlow(withIntent:
-                                ExampleAppIntents.flow1View2Requested(accountId: accountId), animated: true)))
+                                nil,
+//                                ExampleAppIntents.flow1View2Requested(accountId: accountId),
+                                                              animated: true)
+                                )
+                            )
                         }
                     }).eraseToAnyPublisher()
                 default:

@@ -11,7 +11,6 @@ import SwiftUI
 import Combine
 
 private class FlowPresentation {
-    //    var presentingVCFromParentFlow: UIViewController?
     var viewControllers = [UIViewController]()
     var flow: Flow
 
@@ -42,7 +41,7 @@ class FlowCoordinator: ObservableObject {
     private var flowStack: [FlowPresentation] = []
     @Published private var intentTransition: IntentTransition?
     @Published private var viewPresentation: ViewPresentation?
-    private var dismissVCPublisher = PassthroughSubject<UIViewController, Never>()
+    private var dismissVCPublisher = PassthroughSubject<[UIViewController], Never>()
 
     private var cancellables = Set<AnyCancellable>()
 
@@ -83,13 +82,16 @@ class FlowCoordinator: ObservableObject {
                         let topNavVC = self.rootNavigationController.topPresentedNavController
                         if topNavVC.isModal {
                             topNavVC.dismiss(animated: animated, completion: {
-                                self.intentTransition = self.flowStack.last?.intentTransition(intent: intent)
+                                if let intent = intent {
+                                    self.intentTransition = self.flowStack.last?.intentTransition(intent: intent)
+                                }
                             })
                         } else if topNavVC.viewControllers.contains(presentingVC) {
                             topNavVC.popToViewController(presentingVC,
                                                          animated: animated)
-                            self.intentTransition = self.flowStack.last?.intentTransition(intent: intent)
-                    }
+                            if let intent = intent {
+                                self.intentTransition = self.flowStack.last?.intentTransition(intent: intent)
+                            }                    }
                     case .view(let viewPres, let style):
                         self.viewPresentation = ViewPresentation(presentable: viewPres, type: style)
                     case .pop(let animated):
@@ -98,10 +100,6 @@ class FlowCoordinator: ObservableObject {
                             topNavVC.dismiss(animated: animated, completion: nil)
                         } else {
                             topNavVC.popViewController(animated: animated)
-                    }
-                    case .multiple(let contributions):
-                        for contribution in contributions {
-                            self.flowContributor = contribution
                     }
                     case .none:
                         ()
@@ -169,49 +167,15 @@ class FlowCoordinator: ObservableObject {
             .store(in: &cancellables)
 
         dismissVCPublisher
-            .sink { (dismissingVC) in
-                var vcToDismiss: [UIViewController] = []
-                if let dismissingNavController = dismissingVC as? UINavigationController {
-                    vcToDismiss += dismissingNavController.viewControllers
-                } else {
-                    vcToDismiss = [dismissingVC]
-                }
+            .sink { (dismissingVCs) in
 
-                // Check if we have popped back to previous flow
-
-//                var poppedVCFound = false
-//                var flowPres = self.flowStack.last
-
-//                while case .some(let _flowPres) = flowPres, !poppedVCFound {
-                for (idx, flowPres) in self.flowStack.reversed().enumerated() {
-                    flowPres.viewControllers.removeAll { vcToDismiss.contains($0) }
+                for flowPres in self.flowStack.reversed() {
+                    flowPres.viewControllers.removeAll { dismissingVCs.contains($0) }
 
                     if flowPres.viewControllers.isEmpty {
-                        print("Popped back to previous flow: \(flowPres)")
-//                        _ = self.flowStack.popLast()
-                        self.flowStack.remove(at: idx)
-//                        flowPres = self.flowStack.last
+                        print("Popped flow: \(flowPres)")
+                        _ = self.flowStack.popLast()
                     }
-
-//                    if let foundIdx = flowsVCs.lastIndex(where: {
-//                        $0 === vcToDismiss
-//                    }) {
-//                        poppedVCFound = true
-//                        if foundIdx == 0 {
-//                            print("Popped back to previous flow: \(_flowPres)")
-//                            _ = self.flowStack.popLast()
-//                            flowPres = self.flowStack.last
-//
-//                        } else {
-//                            let rangeToDelete = Range(uncheckedBounds: (lower: foundIdx, upper: flowsVCs.endIndex))
-//                            _flowPres.viewControllers.removeSubrange(rangeToDelete)
-//                        }
-//                    }
-//                    else {
-//                        print("Popped back to previous flow: \(_flowPres)")
-//                        _ = self.flowStack.popLast()
-//                        flowPres = self.flowStack.last
-//                    }
                 }
         }
         .store(in: &cancellables)
@@ -219,46 +183,24 @@ class FlowCoordinator: ObservableObject {
 }
 
 private class FlowHostingViewController: UIHostingController<AnyView> {
-    var didDismissPublisher = PassthroughSubject<UIViewController, Never>()
-
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        if self.isBeingDismissed {
-            handleDismiss()
-        }
-    }
+    var didDismissPublisher = PassthroughSubject<[UIViewController], Never>()
 
     override func willMove(toParent parent: UIViewController?) {
         super.willMove(toParent: parent)
         if parent == nil {
-            handleDismiss() // here
+            didDismissPublisher.send([self])
         }
-    }
-
-    func handleDismiss(){
-        didDismissPublisher.send(self)
     }
 }
 
 private class FlowNavigationController: UINavigationController {
-    var didDismissPublisher = PassthroughSubject<UIViewController, Never>()
+    var didDismissPublisher = PassthroughSubject<[UIViewController], Never>()
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         if self.isBeingDismissed {
-            handleDismiss()
+            didDismissPublisher.send(children)
         }
-    }
-
-    override func willMove(toParent parent: UIViewController?) {
-        super.willMove(toParent: parent)
-        if parent == nil {
-            handleDismiss()
-        }
-    }
-
-    func handleDismiss(){
-        didDismissPublisher.send(self)
     }
 }
 

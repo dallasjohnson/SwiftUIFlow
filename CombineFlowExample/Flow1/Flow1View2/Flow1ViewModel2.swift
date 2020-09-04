@@ -24,7 +24,7 @@ class Flow1ViewModel2: Presentable, ObservableObject {
 
     func showDetails() {
         isLoading = true
-        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + DispatchTimeInterval.milliseconds(2000)) {
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + DispatchTimeInterval.milliseconds(TimeDelayConstant)) {
             if self.shouldLaunchedFlow2 {
                 self.intentPublisher.send(ExampleAppIntents.flow1RequestFlow2(accountId: self.accountId))
             } else {

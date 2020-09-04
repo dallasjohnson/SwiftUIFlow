@@ -38,7 +38,7 @@ struct Flow2View1: View {
                 Text("Flow 2 View 1")
                 Text("View model data: \(viewModel.accountId)")
                 if buttonTapped {
-                    CountDownTimer(message: "time: ", counter: 2000)
+                    CountDownTimer(message: "time: ", counter: TimeDelayConstant)
                 }
                 Button(action: {
                     self.buttonTapped = true

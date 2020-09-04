@@ -8,6 +8,8 @@
 
 import UIKit
 
+var TimeDelayConstant = 200
+
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 

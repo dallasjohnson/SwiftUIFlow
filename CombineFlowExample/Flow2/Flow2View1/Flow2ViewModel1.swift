@@ -16,12 +16,12 @@ class Flow2ViewModel1: Presentable, ObservableObject {
 
     @Published var buttonLabel: String = "Go to View 2"
     @Published var accountId: String = "12AJDJ-SFHSJK232-SF"
-//    @Published private var time = 2000
+//    @Published private var time = TimeDelayConstant
 
     func showDetails() {
 //        timer.fire()
         buttonLabel = "ActionButton has been tapped"
-        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + DispatchTimeInterval.milliseconds(2000)) {
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + DispatchTimeInterval.milliseconds(TimeDelayConstant)) {
             self.intentPublisher.send(ExampleAppIntents.flow2View2Requested(accountId: self.accountId, firstName: "fiRstanememem", lastName: "llaaaastName"))
         }
     }
